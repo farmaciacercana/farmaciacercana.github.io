@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farmacia Cercana — Encuentra una farmacia cerca de ti</title>
+<meta name="description" content="Farmacia Cercana: herramientas gratuitas para encontrar una farmacia cerca de ti, organizar tus medicamentos, comparar genéricos y aprovechar los servicios de farmacia.">
+<meta name="theme-color" content="#0b5e4b">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+:root{--deep:#0b5e4b;--deep2:#0e7a61;--accent:#0ea47a;--accent-dark:#0b7a5c;--accent-bg:#e2f5ee;--bg:#f2f7f5;--card:#fff;--text:#12332b;--muted:#5b7268;--border:#dce8e2;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--warn-bg:#fef3c7;--warn:#92400e;--radius:14px;--shadow:0 1px 3px rgba(11,94,75,.08),0 4px 14px rgba(11,94,75,.06)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+a{color:var(--accent-dark)}
+header{background:var(--deep);color:#fff;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.header-in{display:flex;align-items:center;gap:14px;padding:13px 16px;max-width:1080px;margin:0 auto;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;flex:1;min-width:200px}
+.brand .mark{width:38px;height:38px;border-radius:9px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:19px;flex:none}
+.brand b{font-size:19px;letter-spacing:.2px}
+.brand b span{color:#7fe3c0}
+.brand small{display:block;font-size:11.5px;color:#a7d8c8;font-weight:400}
+nav.main-nav{display:flex;gap:4px;flex-wrap:wrap}
+nav.main-nav a{color:#c9e8dd;text-decoration:none;font-size:14px;font-weight:600;padding:8px 11px;border-radius:8px}
+nav.main-nav a:hover{background:var(--deep2);color:#fff}
+.hero{background:linear-gradient(135deg,var(--deep) 0%,#0e7a61 60%,#14a07e 100%);color:#fff;padding:44px 0 40px}
+.hero h1{font-size:clamp(26px,5vw,40px);line-height:1.2;max-width:760px}
+.hero h1 span{color:#7fe3c0}
+.hero p{color:#d6efe6;font-size:16px;max-width:720px;margin-top:12px}
+.hero .badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.hero .badge{background:rgba(14,164,122,.18);border:1px solid rgba(127,227,192,.45);color:#bdf0dd;font-size:13px;font-weight:600;border-radius:999px;padding:6px 13px}
+section{padding:34px 0 8px}
+section h2{font-size:24px;margin-bottom:6px}
+section h2 .bar{color:var(--accent)}
+.section-sub{color:var(--muted);font-size:15px;max-width:760px;margin-bottom:20px}
+.calc-grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:860px){.calc-grid{grid-template-columns:1fr 1fr}.calc-grid .wide{grid-column:1 / -1}}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px;border-top:4px solid var(--accent)}
+.card h3{font-size:18px;margin-bottom:2px}
+.card .tag{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-dark)}
+.card .desc{font-size:14px;color:var(--muted);margin:6px 0 16px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px}
+.field label small{font-weight:400;color:var(--muted)}
+.field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;outline:none;background:#fff;color:var(--text)}
+.field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(14,164,122,.18)}
+.field-row{display:grid;grid-template-columns:1fr;gap:0 12px}
+@media(min-width:560px){.field-row{grid-template-columns:1fr 1fr}}
+.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:800;min-height:46px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--accent-dark)}
+.btn-row{margin-top:4px}
+.results{display:none;margin-top:16px}
+.results.show{display:block}
+.results h4{font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(min-width:560px){.stat-grid{grid-template-columns:repeat(3,1fr)}}
+.stat{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center}
+.stat.hero{background:var(--accent-bg);border-color:#a7e8d2}
+.stat .k{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-size:19px;font-weight:800;margin-top:3px;word-break:break-word}
+.stat.hero .v{color:#065f46}
+.stat.wide{grid-column:1 / -1}
+.verdict{margin-top:10px;border-radius:10px;padding:11px 14px;font-size:14px;font-weight:600}
+.verdict.ok{background:var(--green-bg);color:var(--green)}
+.verdict.warn{background:var(--warn-bg);color:var(--warn)}
+.verdict.bad{background:var(--red-bg);color:var(--red)}
+.note{font-size:12.5px;color:var(--muted);margin-top:12px}
+.formula{font-size:13px;color:var(--muted);background:#f8fafc;border:1px dashed var(--border);border-radius:8px;padding:8px 11px;margin-top:12px}
+.formula code{color:var(--deep);font-weight:600}
+.table-wrap{overflow-x:auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th{background:var(--deep);color:#fff;text-align:left;padding:11px 12px;font-size:13px}
+td{padding:10px 12px;border-bottom:1px solid var(--border)}
+tr:nth-child(even) td{background:#f8fafc}
+.guide-grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:640px){.guide-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:960px){.guide-grid{grid-template-columns:1fr 1fr 1fr}}
+.guide{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 18px;border-left:4px solid var(--accent)}
+.guide .g-tag{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--accent-dark)}
+.guide h3{font-size:16.5px;margin:5px 0 7px}
+.guide p{font-size:14px;color:#334155}
+.guide-link{margin-top:10px;font-size:14px;font-weight:700}
+.guide-link a{text-decoration:none}
+.guide-link a:hover{text-decoration:underline}
+.faq{max-width:820px}
+.faq-item{background:#fff;border-radius:12px;box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+.faq-item button{width:100%;text-align:left;background:none;border:0;padding:16px 18px;font-size:15.5px;font-weight:700;font-family:inherit;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.faq-item button .chev{color:var(--accent-dark);font-size:20px;flex:none}
+.faq-item .answer{display:none;padding:0 18px 16px;font-size:14.5px;color:#334155}
+.faq-item.open .answer{display:block}
+.faq-item.open .chev{transform:rotate(45deg)}
+.about{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px}
+.about p{font-size:14.5px;color:#334155;margin-bottom:10px}
+.disclaimer{background:#fff7e6;border-left:4px solid #d97706;border-radius:10px;padding:14px 16px;margin:22px 0;font-size:14px;color:#7c2d12}
+footer{background:var(--deep);color:#a7d8c8;margin-top:44px;padding:30px 0 26px}
+footer .cols{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:640px){footer .cols{grid-template-columns:2fr 1fr 1fr}}
+footer h4{color:#fff;font-size:15px;margin-bottom:10px}
+footer p,footer a{font-size:13.5px;color:#a7d8c8;text-decoration:none}
+footer a:hover{color:#fff}
+footer ul{list-style:none}
+footer li{margin-bottom:6px}
+.copy{border-top:1px solid #0e7a61;margin-top:22px;padding-top:16px;font-size:12.5px;text-align:center}
+.check-list{list-style:none;margin:4px 0 8px}
+.check-list li{margin-bottom:10px;font-size:15px}
+.check-list input{margin-right:9px;transform:scale(1.25);accent-color:var(--accent)}
+.score{font-size:15px;font-weight:700;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-in">
+    <a class="brand" href=""><span class="mark">+</span><span><b>Farmacia <span>Cercana</span></b><small>farmaciacercana.github.io</small></span></a>
+    <nav class="main-nav">
+      <a href="#herramientas">Herramientas</a>
+      <a href="#tabla">Tabla de referencia</a>
+      <a href="#guias">Guías</a>
+      <a href="#faq">Preguntas frecuentes</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Encuentra una <span>farmacia cerca de ti</span></h1>
+      <p>Farmacia Cercana te ayuda a localizar farmacias abiertas, organizar tus medicamentos, comparar precios de genéricos y aprovechar los servicios de tu farmacia. Herramientas gratuitas, sin registro.</p>
+      <div class="badges"><span class="badge">Sin registro</span><span class="badge">5 herramientas gratuitas</span><span class="badge">Guías en español</span><span class="badge">Información verificada</span></div>
+    </div>
+  </section>
+
+  <section id="herramientas" class="wrap">
+    <h2><span class="bar">|</span> Herramientas de farmacia</h2>
+    <p class="section-sub">Calculadoras y planificadores gratuitos para cuidar de tus medicamentos. Todo se calcula en tu navegador: no guardamos ningún dato.</p>
+    <div class="calc-grid">
+
+      <div class="card">
+        <p class="tag">Herramienta 1</p>
+        <h3>Recordatorio de renovación de recetas</h3>
+        <p class="desc">Calcula cuándo se te acaba el suministro y cuándo debes pedir la renovación.</p>
+        <div class="field"><label for="ren-last">Fecha de la última renovación</label><input type="date" id="ren-last"></div>
+        <div class="field"><label for="ren-supply">Días de suministro por envase</label>
+          <select id="ren-supply"><option value="30">30 días</option><option value="60">60 días</option><option value="90">90 días</option><option value="14">14 días</option></select></div>
+        <div class="btn-row"><button class="btn" onclick="calcRenovacion()">Calcular fecha de renovación</button></div>
+        <div class="results" id="ren-results">
+          <h4>Resultado</h4>
+          <div class="stat-grid">
+            <div class="stat hero"><div class="k">Renovar antes del</div><div class="v" id="ren-date">—</div></div>
+            <div class="stat"><div class="k">Días restantes</div><div class="v" id="ren-left">—</div></div>
+            <div class="stat"><div class="k">Pedir renovación el</div><div class="v" id="ren-warn">—</div></div>
+          </div>
+          <div class="verdict ok" id="ren-verdict"></div>
+          <p class="formula">Fórmula: <code>fecha de renovación = última renovación + días de suministro</code>. Te avisamos 7 días antes.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="tag">Herramienta 2</p>
+        <h3>Comprobador de caducidad de medicamentos</h3>
+        <p class="desc">Comprueba si un medicamento sigue vigente o si ya ha caducado.</p>
+        <div class="field"><label for="cad-exp">Fecha de caducidad (en el envase)</label><input type="date" id="cad-exp"></div>
+        <div class="btn-row"><button class="btn" onclick="calcCaducidad()">Comprobar caducidad</button></div>
+        <div class="results" id="cad-results">
+          <h4>Resultado</h4>
+          <div class="stat-grid">
+            <div class="stat hero"><div class="k">Fecha de caducidad</div><div class="v" id="cad-date">—</div></div>
+            <div class="stat wide"><div class="k">Tiempo restante</div><div class="v" id="cad-left">—</div></div>
+          </div>
+          <div class="verdict ok" id="cad-verdict"></div>
+          <p class="note">Nunca tomes un medicamento caducado. Llévalo al punto SIGRE de tu farmacia para desecharlo de forma segura.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="tag">Herramienta 3</p>
+        <h3>Genérico vs marca: comparación de precio</h3>
+        <p class="desc">Descubre cuánto ahorras al elegir el medicamento genérico en lugar del de marca.</p>
+        <div class="field-row">
+          <div class="field"><label for="gen-marca">Precio del medicamento de marca (€)</label><input type="number" id="gen-marca" min="0" step="0.01" placeholder="ej. 12,50"></div>
+          <div class="field"><label for="gen-gen">Precio del genérico (€)</label><input type="number" id="gen-gen" min="0" step="0.01" placeholder="ej. 4,20"></div>
+        </div>
+        <div class="field"><label for="gen-cant">Envases que compras al mes</label><input type="number" id="gen-cant" min="1" step="1" value="1"></div>
+        <div class="btn-row"><button class="btn" onclick="calcGenerico()">Comparar precios</button></div>
+        <div class="results" id="gen-results">
+          <h4>Resultado</h4>
+          <div class="stat-grid">
+            <div class="stat hero"><div class="k">Ahorro por envase</div><div class="v" id="gen-save">—</div></div>
+            <div class="stat"><div class="k">Ahorro %</div><div class="v" id="gen-pct">—</div></div>
+            <div class="stat"><div class="k">Ahorro al mes</div><div class="v" id="gen-total">—</div></div>
+            <div class="stat wide"><div class="k">Ahorro estimado al año</div><div class="v" id="gen-year">—</div></div>
+          </div>
+          <div class="verdict ok" id="gen-verdict"></div>
+          <p class="formula">Fórmula: <code>ahorro = precio de marca − precio genérico</code>. Los genéricos tienen el mismo principio activo y la misma eficacia.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="tag">Herramienta 4</p>
+        <h3>Planificador de horario de pastillas</h3>
+        <p class="desc">Crea un horario de tomas repartido de forma uniforme a lo largo del día.</p>
+        <div class="field-row">
+          <div class="field"><label for="hor-doses">Tomas al día</label>
+            <select id="hor-doses"><option value="1">1 toma</option><option value="2" selected>2 tomas</option><option value="3">3 tomas</option><option value="4">4 tomas</option></select></div>
+          <div class="field"><label for="hor-first">Hora de la primera toma</label><input type="time" id="hor-first" value="08:00"></div>
+        </div>
+        <div class="btn-row"><button class="btn" onclick="calcHorario()">Crear mi horario</button></div>
+        <div class="results" id="hor-results">
+          <h4>Tu horario de tomas</h4>
+          <p class="note">Intervalo entre tomas: <strong id="hor-interval">—</strong></p>
+          <div class="table-wrap" style="margin-top:10px"><table style="min-width:0"><thead><tr><th>Toma</th><th>Hora</th><th>Consejo</th></tr></thead><tbody id="hor-table"></tbody></table></div>
+          <p class="note">Sigue siempre la pauta de tu médico o farmacéutico. Si una toma coincide con una comida, respeta esa indicación.</p>
+        </div>
+      </div>
+
+      <div class="card wide">
+        <p class="tag">Herramienta 5</p>
+        <h3>Lista de servicios de farmacia</h3>
+        <p class="desc">Descubre todos los servicios que tu farmacia puede ofrecerte, más allá de vender medicamentos. Marca los que te interesen.</p>
+        <ul class="check-list" id="serv-list"></ul>
+        <p class="score" id="serv-count">0 de 8 servicios seleccionados</p>
+        <div class="verdict warn" id="serv-verdict">Marca los servicios que te interesan y pregunta por ellos en tu farmacia.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="tabla" class="wrap">
+    <h2><span class="bar">|</span> Tabla de referencia: medicamentos sin receta</h2>
+    <p class="section-sub">Categorías habituales de medicamentos de venta libre y sus usos típicos. Información general: lee siempre el prospecto y consulta a tu farmacéutico.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Categoría</th><th>Ejemplos habituales</th><th>Uso típico</th><th>Precaución</th></tr></thead>
+      <tbody>
+        <tr><td>Analgésicos</td><td>Paracetamol, ibuprofeno</td><td>Dolor leve y fiebre</td><td>No superar la dosis del prospecto</td></tr>
+        <tr><td>Antiácidos</td><td>Omeprazol, antiácidos</td><td>Acidez y reflujo</td><td>Uso prolongado solo con consejo médico</td></tr>
+        <tr><td>Antihistamínicos</td><td>Cetirizina, loratadina</td><td>Alergia, picores, estornudos</td><td>Algunos producen sueño</td></tr>
+        <tr><td>Antitusivos</td><td>Dextrometorfano</td><td>Tos seca</td><td>No usar si la tos dura más de una semana</td></tr>
+        <tr><td>Descongestionantes</td><td>Pseudoefedrina, oximetazolina</td><td>Congestión nasal</td><td>Máximo 3–5 días seguidos</td></tr>
+        <tr><td>Probióticos</td><td>Lactobacillus</td><td>Salud digestiva</td><td>Conservar según el envase</td></tr>
+        <tr><td>Vitaminas y minerales</td><td>Vitamina D, hierro, zinc</td><td>Complementar la dieta</td><td>No sustituyen una dieta variada</td></tr>
+        <tr><td>Cuidado de la piel</td><td>Cremas hidratantes, antisépticos</td><td>Heridas leves, piel seca</td><td>Consultar si la herida es profunda</td></tr>
+        <tr><td>Salud ocular</td><td>Lágrimas artificiales</td><td>Ojos secos o irritados</td><td>Acudir al médico si hay dolor</td></tr>
+        <tr><td>Antidiarréicos</td><td>Loperamida</td><td>Diarrea ocasional</td><td>Hidratarse bien; consultar si hay fiebre</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Esta tabla es solo informativa. Los medicamentos sin receta también tienen efectos secundarios e interacciones. Ante cualquier duda, pregunta a tu farmacéutico.</p>
+  </section>
+
+  <section id="guias" class="wrap">
+    <h2><span class="bar">|</span> Guías de farmacia</h2>
+    <p class="section-sub">Artículos prácticos para sacar el máximo partido a tu farmacia y cuidar de tus medicamentos.</p>
+    <div class="guide-grid">
+      <div class="guide"><p class="g-tag">Guía</p><h3>Cómo encontrar una farmacia abierta hasta tarde</h3><p>Farmacias de guardia, horarios nocturnos y cómo localizar la más cercana cuando la necesitas.</p><p class="guide-link"><a href="guides/encontrar-farmacia-abierta-tarde.html">Leer la guía →</a></p></div>
+      <div class="guide"><p class="g-tag">Guía</p><h3>Genéricos vs medicamentos de marca</h3><p>¿Son iguales? ¿Por qué cuestan menos? Todo lo que debes saber antes de elegir.</p><p class="guide-link"><a href="guides/genericos-vs-marca.html">Leer la guía →</a></p></div>
+      <div class="guide"><p class="g-tag">Guía</p><h3>Cómo leer una receta</h3><p>Descifra la letra del médico: dosis, frecuencia, duración y advertencias de tu receta.</p><p class="guide-link"><a href="guides/como-leer-una-receta.html">Leer la guía →</a></p></div>
+      <div class="guide"><p class="g-tag">Guía</p><h3>Guardar medicamentos en casa de forma segura</h3><p>Temperatura, humedad, niños y mascotas: el botiquín bien organizado.</p><p class="guide-link"><a href="guides/guardar-medicamentos-en-casa.html">Leer la guía →</a></p></div>
+      <div class="guide"><p class="g-tag">Guía</p><h3>Qué preguntar a tu farmacéutico</h3><p>Las 10 preguntas que deberías hacer cada vez que te den un medicamento nuevo.</p><p class="guide-link"><a href="guides/que-preguntar-a-tu-farmaceutico.html">Leer la guía →</a></p></div>
+      <div class="guide"><p class="g-tag">Guía</p><h3>Traslado y entrega de recetas</h3><p>Cómo trasladar tus recetas a otra farmacia y pedir la entrega a domicilio.</p><p class="guide-link"><a href="guides/traslado-y-entrega-de-recetas.html">Leer la guía →</a></p></div>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <h2><span class="bar">|</span> Preguntas frecuentes</h2>
+    <p class="section-sub">Respuestas rápidas a las dudas más habituales sobre farmacias y medicamentos.</p>
+    <div class="faq">
+      <div class="faq-item"><button>¿Cómo encuentro una farmacia abierta ahora mismo? <span class="chev">+</span></button><div class="answer">Busca en Google Maps «farmacia cerca de mí» y filtra por «abierta ahora», o consulta el listado de farmacias de guardia de tu colegio oficial de farmacéuticos. Muchas farmacias muestran su horario en su ficha de Google.</div></div>
+      <div class="faq-item"><button>¿Un medicamento genérico es igual que el de marca? <span class="chev">+</span></button><div class="answer">Sí. El genérico tiene el mismo principio activo, la misma dosis y la misma eficacia que el de marca. La diferencia está en el precio y en los excipientes (los componentes sin efecto terapéutico). Tu farmacéutico puede explicarte las diferencias concretas.</div></div>
+      <div class="faq-item"><button>¿Puedo tomar un medicamento caducado? <span class="chev">+</span></button><div class="answer">No. Un medicamento caducado puede haber perdido eficacia o volverse inseguro. Llévalo al punto SIGRE de tu farmacia para desecharlo correctamente y pide uno nuevo.</div></div>
+      <div class="faq-item"><button>¿Dónde debo guardar los medicamentos en casa? <span class="chev">+</span></button><div class="answer">En un lugar fresco y seco, lejos del baño y de la cocina, y siempre fuera del alcance de los niños. Algunos medicamentos necesitan nevera: respeta siempre lo que indica el envase.</div></div>
+      <div class="faq-item"><button>¿La farmacia puede entregarme los medicamentos en casa? <span class="chev">+</span></button><div class="answer">Muchas farmacias ofrecen entrega a domicilio, sobre todo para personas mayores o con movilidad reducida. Pregunta en tu farmacia por las condiciones y si tiene algún coste.</div></div>
+      <div class="faq-item"><button>¿Necesito receta para todos los medicamentos? <span class="chev">+</span></button><div class="answer">No. Los medicamentos de venta libre (analgésicos, antiácidos, antihistamínicos, etc.) se pueden comprar sin receta. Los antibióticos, los tratamientos crónicos y muchos otros sí la requieren.</div></div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="about">
+      <h2 style="font-size:20px;margin-bottom:10px">Sobre Farmacia Cercana</h2>
+      <p>Farmacia Cercana es un sitio web gratuito con herramientas y guías para ayudarte a encontrar una farmacia cerca de ti y a organizar tus medicamentos. Nuestro objetivo es que aproveches mejor los servicios de tu farmacia y que tomes tus medicamentos de forma segura.</p>
+      <p>Todo el contenido es original y se ofrece con fines informativos. No vendemos medicamentos ni ofrecemos consultas médicas.</p>
+    </div>
+    <div class="disclaimer"><strong>Aviso:</strong> Aviso importante: la información de este sitio es solo informativa y no sustituye el consejo médico. Consulta siempre a tu farmacéutico o a tu médico antes de tomar, cambiar o dejar un medicamento.</div>
+  </section>
+</main>
+
+<script>
+function $(id){return document.getElementById(id)}
+function show(id){$(id).classList.add('show')}
+function fmtMoney(n){return n.toFixed(2).replace('.',',')+' €'}
+function parseDate(v){var p=v.split('-');return new Date(+p[0],+p[1]-1,+p[2])}
+function fmtES(d){return ('0'+d.getDate()).slice(-2)+'/'+('0'+(d.getMonth()+1)).slice(-2)+'/'+d.getFullYear()}
+function daysBetween(a,b){return Math.round((b-a)/86400000)}
+// 1. Recordatorio de renovación de recetas
+function calcRenovacion(){
+  var last=$('ren-last').value, supply=parseInt($('ren-supply').value,10);
+  if(!last){alert('Elige la fecha de la última renovación.');return}
+  var d=parseDate(last); d.setDate(d.getDate()+supply);
+  var today=new Date(); today.setHours(0,0,0,0);
+  var left=daysBetween(today,d);
+  var warn=new Date(d); warn.setDate(warn.getDate()-7);
+  $('ren-date').textContent=fmtES(d);
+  $('ren-left').textContent=left>=0?left+' días':'vencida hace '+(-left)+' días';
+  $('ren-warn').textContent=fmtES(warn);
+  var v=$('ren-verdict');
+  if(left<0){v.className='verdict bad';v.textContent='Tu receta ya debería haberse renovado. Pide la renovación cuanto antes.'}
+  else if(left<=7){v.className='verdict warn';v.textContent='Renueva esta semana: quedan '+left+' días de suministro.'}
+  else{v.className='verdict ok';v.textContent='Tienes suministro suficiente. Marca el '+fmtES(warn)+' para pedir la renovación.'}
+  show('ren-results');
+}
+// 2. Comprobador de caducidad
+function calcCaducidad(){
+  var exp=$('cad-exp').value;
+  if(!exp){alert('Elige la fecha de caducidad.');return}
+  var d=parseDate(exp), today=new Date(); today.setHours(0,0,0,0);
+  var left=daysBetween(today,d);
+  $('cad-left').textContent=left>=0?left+' días':'caducado hace '+(-left)+' días';
+  $('cad-date').textContent=fmtES(d);
+  var v=$('cad-verdict');
+  if(left<0){v.className='verdict bad';v.textContent='Medicamento caducado: no lo tomes. Llévalo a un punto de recogida de la farmacia (punto SIGRE).'}
+  else if(left<=30){v.className='verdict warn';v.textContent='Caduca pronto (menos de 30 días). Úsalo antes o consulta en tu farmacia.'}
+  else{v.className='verdict ok';v.textContent='Medicamento vigente. Revisa la caducidad cada mes.'}
+  show('cad-results');
+}
+// 3. Genérico vs marca
+function calcGenerico(){
+  var marca=parseFloat($('gen-marca').value), gen=parseFloat($('gen-gen').value), n=parseFloat($('gen-cant').value)||1;
+  if(!(marca>0)||!(gen>=0)){alert('Introduce precios válidos.');return}
+  var save=marca-gen, pct=marca>0?(save/marca*100):0;
+  $('gen-save').textContent=fmtMoney(save);
+  $('gen-pct').textContent=pct.toFixed(1).replace('.',',')+' %';
+  $('gen-total').textContent=fmtMoney(save*n);
+  $('gen-year').textContent=fmtMoney(save*n*12);
+  var v=$('gen-verdict');
+  if(save>0){v.className='verdict ok';v.textContent='El genérico te ahorra '+fmtMoney(save)+' por envase ('+pct.toFixed(0)+' %). Pregunta en tu farmacia si existe versión genérica.'}
+  else if(save===0){v.className='verdict warn';v.textContent='Ambos cuestan lo mismo.'}
+  else{v.className='verdict bad';v.textContent='El genérico sale más caro en este caso. Revisa los precios.'}
+  show('gen-results');
+}
+// 4. Planificador de horario de pastillas
+function calcHorario(){
+  var doses=parseInt($('hor-doses').value,10), first=$('hor-first').value||'08:00';
+  var parts=first.split(':'); var h=parseInt(parts[0],10), m=parseInt(parts[1],10);
+  var interval=Math.round(24/doses*60);
+  var rows='', t=h*60+m;
+  for(var i=0;i<doses;i++){
+    var hh=Math.floor(t/60)%24, mm=t%60;
+    rows+='<tr><td>Toma '+(i+1)+'</td><td>'+('0'+hh).slice(-2)+':'+('0'+mm).slice(-2)+'</td><td>'+(i===0?'Con el desayuno':(i===doses-1?'Antes de dormir':'Entre comidas'))+'</td></tr>';
+    t+=interval;
+  }
+  $('hor-interval').textContent=Math.floor(interval/60)+' h '+(interval%60)+' min';
+  $('hor-table').innerHTML=rows;
+  show('hor-results');
+}
+// 5. Lista de servicios de farmacia
+var SERVICIOS=[['Vacunación','Vacunas de gripe, COVID y otras según la campaña.'],['Medición de presión arterial','Control rápido de la tensión en la farmacia.'],['Entrega a domicilio','Envío de medicamentos a casa, útil para personas mayores.'],['Revisión de medicamentos','El farmacéutico revisa interacciones entre tus medicinas.'],['Toma de tensión y glucosa','Mediciones básicas de salud sin cita previa.'],['Preparación de SPD','Pastillero semanal preparado por la farmacia.'],['Asesoramiento dermocosmético','Consejo sobre cuidado de la piel y productos.'],['Punto SIGRE','Recogida de medicamentos caducados o que ya no usas.']];
+(function(){
+  var box=document.getElementById('serv-list');
+  if(!box)return;
+  SERVICIOS.forEach(function(s,i){
+    var li=document.createElement('li');
+    li.innerHTML='<label><input type="checkbox" data-serv="'+i+'"> <strong>'+s[0]+'</strong> — '+s[1]+'</label>';
+    box.appendChild(li);
+  });
+  box.addEventListener('change',function(){
+    var c=box.querySelectorAll('input:checked').length;
+    document.getElementById('serv-count').textContent=c+' de '+SERVICIOS.length+' servicios seleccionados';
+    var v=document.getElementById('serv-verdict');
+    if(c===0){v.className='verdict warn';v.textContent='Marca los servicios que te interesan y pregunta por ellos en tu farmacia.'}
+    else if(c<=3){v.className='verdict ok';v.textContent='Buen comienzo. Estos '+c+' servicios pueden ayudarte en tu día a día.'}
+    else{v.className='verdict ok';v.textContent='¡Muy bien! Aprovechas '+c+' servicios de farmacia. Pregunta por horarios y disponibilidad.'}
+  });
+})();
+// FAQ accordion
+document.querySelectorAll('.faq-item button').forEach(function(b){
+  b.addEventListener('click',function(){b.parentElement.classList.toggle('open')});
+});
+</script>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Farmacia Cercana</h4>
+        <p>Guías y herramientas gratuitas para encontrar una farmacia cerca de ti, organizar tus medicamentos y ahorrar en tus recetas.</p>
+        <p>Aviso importante: la información de este sitio es solo informativa y no sustituye el consejo médico. Consulta siempre a tu farmacéutico o a tu médico antes de tomar, cambiar o dejar un medicamento.</p>
+      </div>
+      <div>
+        <h4>Guías</h4>
+        <ul>
+          <li><a href="guides/encontrar-farmacia-abierta-tarde.html">Farmacia abierta hasta tarde</a></li>
+          <li><a href="guides/genericos-vs-marca.html">Genéricos vs marca</a></li>
+          <li><a href="guides/como-leer-una-receta.html">Cómo leer una receta</a></li>
+          <li><a href="guides/guardar-medicamentos-en-casa.html">Guardar medicamentos en casa</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Herramientas</h4>
+        <ul>
+          <li><a href="#herramientas">Renovación de recetas</a></li>
+          <li><a href="#herramientas">Caducidad de medicamentos</a></li>
+          <li><a href="#herramientas">Genérico vs marca</a></li>
+          <li><a href="#herramientas">Horario de pastillas</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="copy">© 2026 Farmacia Cercana — Contenido informativo, no es consejo médico.</p>
+  </div>
+</footer>
+</body>
+</html>
